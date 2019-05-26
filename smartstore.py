@@ -25,6 +25,7 @@ if __name__ == '__main__':
     # 로그인
     driver.find_element_by_xpath('//*[@id="frmNIDLogin"]/fieldset/input').click()
 
+    # 새로운 기기 등록 안함
     driver.find_element_by_class_name('btn_cancel').click()
     time.sleep(1)
 
@@ -45,7 +46,7 @@ if __name__ == '__main__':
     driver.find_element_by_class_name('_excelDownloadBtn').click()
     time.sleep(5)
 
-    # 엑셀 파일 열기
+    # 엑셀 열기
     files = [f for f in os.listdir(download_path) if os.path.isfile(os.path.join(download_path, f))]
 
     if len(files) == 1 and files[0].endswith('.xlsx'):
@@ -85,7 +86,7 @@ if __name__ == '__main__':
             wb_batch.save(os.path.join(download_path, batch_excel))
             wb_batch.close()
 
-            # TODO: 일괄발송 엑셀 파일 업로드: 발송상태 변경 처리
+            # TODO: 일괄발송 엑셀 업로드: 발송상태 변경 처리
             main_page = driver.current_window_handle
             popup = None
 
@@ -103,9 +104,9 @@ if __name__ == '__main__':
 
             driver.switch_to.window(main_page)
 
-            # 일괄발송 엑셀 파일 삭제
+            # 일괄발송 엑셀 로컬 삭제
             os.remove(os.path.join(download_path, batch_excel))
 
-        # 엑셀 파일 삭제
+        # 엑셀 로컬 삭제
         wb_order.close()
         os.remove(os.path.join(download_path, files[0]))
