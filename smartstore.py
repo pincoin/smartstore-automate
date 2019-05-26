@@ -3,6 +3,8 @@ import os
 import time
 
 import openpyxl
+import xlwt
+
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
@@ -58,13 +60,12 @@ if __name__ == '__main__':
         wb_order = openpyxl.load_workbook(files[0])
         ws_order = wb_order.active
 
-        wb_batch = openpyxl.Workbook()
-        ws_batch = wb_batch.active
-        ws_batch.title = '발송처리'
-        ws_batch.cell(row=1, column=1, value='상품주문번호')
-        ws_batch.cell(row=1, column=2, value='배송방법')
-        ws_batch.cell(row=1, column=3, value='택배사')
-        ws_batch.cell(row=1, column=4, value='송장번호')
+        wb_batch = xlwt.Workbook()
+        ws_batch = wb_batch.add_sheet('발송처리')
+        ws_batch.write(0, 0, '상품주문번호')
+        ws_batch.write(0, 1, '배송방법')
+        ws_batch.write(0, 2, '택배사')
+        ws_batch.write(0, 3, '송장번호')
 
         order_count = 0
 
@@ -77,19 +78,20 @@ if __name__ == '__main__':
                 product = row[2].value
                 quantity = int(row[5].value)
                 phone = row[1].value
-                order = row[17].value
+                order = row[17].value # 12 or 17
+
+                print(customer, product, quantity, phone, order)
 
                 # TODO: REST API 비동기 발송 처리
 
                 # 상품주문번호, 배송방법(배송없음), 택배사(공란), 송장번호(공란)
-                ws_batch.cell(row=1 + order_count, column=1, value=order)
-                ws_batch.cell(row=1 + order_count, column=2, value='배송없음')
-                ws_batch.cell(row=1 + order_count, column=3, value='')
-                ws_batch.cell(row=1 + order_count, column=4, value='')
+                ws_batch.write(order_count, 0, order)
+                ws_batch.write(order_count, 1, '직접전달')
+                ws_batch.write(order_count, 2, '')
+                ws_batch.write(order_count, 3, '')
 
         if order_count > 0:
             wb_batch.save(os.path.join(download_path, batch_excel))
-            wb_batch.close()
             print('일괄발송 엑셀 파일 저장')
 
             parent = driver.current_window_handle
@@ -108,11 +110,11 @@ if __name__ == '__main__':
             driver.find_element_by_xpath('//input[@name="uploadedFile"]') \
                 .send_keys(os.path.join(download_path, batch_excel))
             print('일괄발송 엑셀 파일 선택')
-            time.sleep(3)
+            time.sleep(5)
 
             driver.find_element_by_xpath('//span[text()="일괄 발송처리"]').click()
             print('일괄발송 엑셀 파일 업로드')
-            time.sleep(5)
+            time.sleep(3)
 
             driver.find_element_by_xpath('//span[text()="닫기"]').click()
             print('일괄발송 엑셀 팝업 닫기')
@@ -126,3 +128,5 @@ if __name__ == '__main__':
         wb_order.close()
         os.remove(files[0])
         print('엑셀 로컬 삭제')
+
+    driver.quit()
