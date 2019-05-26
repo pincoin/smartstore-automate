@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
     driver.find_element_by_xpath('//select[@name="orderStatus"]/option[text()="발송대기"]').click()
     print('발송대기 선택')
-    time.sleep(2)
+    time.sleep(3)
 
     # 엑셀 다운로드
     driver.find_element_by_class_name('_excelDownloadBtn').click()
@@ -64,7 +64,7 @@ if __name__ == '__main__':
         ws_batch.cell(row=1, column=3, value='택배사')
         ws_batch.cell(row=1, column=4, value='송장번호')
 
-        order_count = 1
+        order_count = 0
 
         for row in ws_order.rows:
             if row[0].row > 2:
@@ -106,17 +106,21 @@ if __name__ == '__main__':
             driver.find_element_by_xpath('//input[@name="uploadedFile"]') \
                 .send_keys(os.path.join(download_path, batch_excel))
             print('일괄발송 엑셀 파일 선택')
-            time.sleep(2)
+            time.sleep(3)
 
             driver.find_element_by_xpath('//span[text()="일괄 발송처리"]').click()
             print('일괄발송 엑셀 파일 업로드')
             time.sleep(5)
 
+            driver.find_element_by_xpath('//span[text()="닫기"]').click()
+            print('일괄발송 엑셀 팝업 닫기')
+            time.sleep(2)
+
             driver.switch_to.window(parent)
 
-            # os.remove(os.path.join(download_path, batch_excel))
+            os.remove(os.path.join(download_path, batch_excel))
             print('일괄발송 엑셀 로컬 삭제')
 
         wb_order.close()
-        # os.remove(files[0])
+        os.remove(files[0])
         print('엑셀 로컬 삭제')
