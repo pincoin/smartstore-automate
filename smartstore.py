@@ -3,8 +3,9 @@ import os
 import time
 
 import openpyxl
+import requests
+import json
 import xlwt
-
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
@@ -73,19 +74,26 @@ if __name__ == '__main__':
             if row[0].row > 2:
                 order_count += 1
 
-                # 구매자명, 판매자 상품코드, 수량, 수취인연락처1, 상품주문번호
-                customer = row[0].value
-                product = row[2].value
-                quantity = int(row[5].value)
-                phone = row[1].value
-                order = row[17].value # 12 or 17
-
-                print(customer, product, quantity, phone, order)
-
                 # TODO: REST API 비동기 발송 처리
 
+                # 구매자명, 판매자 상품코드, 수량, 수취인연락처1, 상품주문번호
+                payload = {
+                    'customer': row[0].value,
+                    'product': int(row[2].value),
+                    'quantity': int(row[5].value),
+                    'phone': row[1].value,
+                    'order': row[17].value
+                }
+                headers = {
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache',
+                    'Authorization': 'Bearer {}'.format(api_token),
+                }
+                print(payload)
+                requests.post(api_url, data=json.dumps(payload), headers=headers)
+
                 # 상품주문번호, 배송방법(배송없음), 택배사(공란), 송장번호(공란)
-                ws_batch.write(order_count, 0, order)
+                ws_batch.write(order_count, 0, row[17].value)
                 ws_batch.write(order_count, 1, '직접전달')
                 ws_batch.write(order_count, 2, '')
                 ws_batch.write(order_count, 3, '')

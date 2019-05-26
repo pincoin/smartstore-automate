@@ -16,3 +16,4 @@ automation for naver smart store
 * mark as sold
 * upload excel file
 * crontab run script every 5 or 10 minutes
+* requests
