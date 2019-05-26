@@ -4,10 +4,9 @@ automation for naver smart store
 
 # requirements
 
-* beautifulsoup4
 * selenium
 * openpyxl
-* celery
+* beautifulsoup4
 
 # TODO
 

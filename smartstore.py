@@ -1,3 +1,4 @@
+import glob
 import os
 import time
 
@@ -22,35 +23,36 @@ if __name__ == '__main__':
     driver.execute_script('document.getElementsByName("pw")[0].value="' + password + '"')
     time.sleep(1)
 
-    # 로그인
     driver.find_element_by_xpath('//*[@id="frmNIDLogin"]/fieldset/input').click()
+    print('로그인 완료')
 
-    # 새로운 기기 등록 안함
     driver.find_element_by_class_name('btn_cancel').click()
+    print('새로운 기기 등록 안함')
     time.sleep(1)
 
     ###
     # TODO: 5분 마다 반복 스레드 처리
 
-    # 스마트스토어 이동
     driver.get('https://sell.smartstore.naver.com/#/naverpay/sale/delivery?summaryInfoType=DELIVERY_READY')
+    print('스마트스토어 이동')
     time.sleep(3)
 
-    # iframe 선택
     driver.switch_to.frame(driver.find_element_by_id('__naverpay'))
+    print('iframe 선택')
 
-    # 발송대기 선택
-    driver.find_element_by_xpath('//select[@name="orderStatus"]/option[text()="배송완료"]').click()
+    driver.find_element_by_xpath('//select[@name="orderStatus"]/option[text()="발송대기"]').click()
+    print('발송대기 선택')
 
     # 엑셀 다운로드
     driver.find_element_by_class_name('_excelDownloadBtn').click()
+    print('엑셀 다운로드')
     time.sleep(5)
 
     # 엑셀 열기
-    files = [f for f in os.listdir(download_path) if os.path.isfile(os.path.join(download_path, f))]
+    files = [f for f in glob.glob(os.path.join('{}/*.xlsx'.format(download_path))) if os.path.isfile(f)]
 
     if len(files) == 1 and files[0].endswith('.xlsx'):
-        wb_order = openpyxl.load_workbook(os.path.join(download_path, files[0]))
+        wb_order = openpyxl.load_workbook(files[0])
         ws_order = wb_order.active
 
         wb_batch = openpyxl.Workbook()
@@ -85,28 +87,28 @@ if __name__ == '__main__':
         if order_count > 0:
             wb_batch.save(os.path.join(download_path, batch_excel))
             wb_batch.close()
+            print('일괄발송 엑셀 파일 저장')
 
             # TODO: 일괄발송 엑셀 업로드: 발송상태 변경 처리
-            main_page = driver.current_window_handle
-            popup = None
+            parent = driver.current_window_handle
+            child = None
 
-            driver \
-                .find_element_by_class_name('_click(nmp.seller_admin.order.n.sale.delivery.openBatchDispatchPop())') \
-                .click()
+            driver.find_element_by_xpath('//button[text()="엑셀 일괄발송"]').click()
 
             for handle in driver.window_handles:
-                if handle != main_page:
-                    popup = handle
+                print(handle)
+                if handle != parent:
+                    child = handle
 
-            driver.switch_to.window(popup)
+            driver.switch_to.window(child)
 
-            driver.find_element_by_id('uploadedFile').sendKeys(os.path.join(download_path, batch_excel))
+            # driver.find_element_by_id('uploadedFile').sendKeys(os.path.join(download_path, batch_excel))
 
-            driver.switch_to.window(main_page)
+            driver.switch_to.window(parent)
 
-            # 일괄발송 엑셀 로컬 삭제
             os.remove(os.path.join(download_path, batch_excel))
+            print('일괄발송 엑셀 로컬 삭제')
 
-        # 엑셀 로컬 삭제
         wb_order.close()
-        os.remove(os.path.join(download_path, files[0]))
+        os.remove(files[0])
+        print('엑셀 로컬 삭제')
