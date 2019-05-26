@@ -4,14 +4,16 @@ import time
 
 import openpyxl
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 
 from secret import *
 
 if __name__ == '__main__':
     options = webdriver.ChromeOptions()
-    options.add_experimental_option('prefs', {
-        'download.default_directory': download_path
-    })
+    options.add_argument('user-data-dir={}'.format(chrome_profile_path))
+    options.add_argument('--profile-directory=Default')
+    options.add_experimental_option('prefs', {'download.default_directory': download_path})
+
     driver = webdriver.Chrome(executable_path=executable_path, chrome_options=options)
 
     driver.implicitly_wait(3)
@@ -26,12 +28,12 @@ if __name__ == '__main__':
     driver.find_element_by_xpath('//*[@id="frmNIDLogin"]/fieldset/input').click()
     print('로그인 완료')
 
-    driver.find_element_by_class_name('btn_cancel').click()
-    print('새로운 기기 등록 안함')
-    time.sleep(1)
-
-    ###
-    # TODO: 5분 마다 반복 스레드 처리
+    try:
+        driver.find_element_by_class_name('btn_cancel').click()
+        print('새로운 기기 등록 안함')
+        time.sleep(2)
+    except NoSuchElementException:
+        pass
 
     driver.get('https://sell.smartstore.naver.com/#/naverpay/sale/delivery?summaryInfoType=DELIVERY_READY')
     print('스마트스토어 이동')
@@ -118,8 +120,8 @@ if __name__ == '__main__':
 
             driver.switch_to.window(parent)
 
-        os.remove(os.path.join(download_path, batch_excel))
-        print('일괄발송 엑셀 로컬 삭제')
+            os.remove(os.path.join(download_path, batch_excel))
+            print('일괄발송 엑셀 로컬 삭제')
 
         wb_order.close()
         os.remove(files[0])
