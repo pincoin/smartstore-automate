@@ -87,7 +87,7 @@ if __name__ == '__main__':
                 headers = {
                     'Content-Type': 'application/json',
                     'Cache-Control': 'no-cache',
-                    'Authorization': 'Bearer {}'.format(api_token),
+                    'Authorization': 'Token {}'.format(api_token),
                 }
                 print(payload)
                 requests.post(api_url, data=json.dumps(payload), headers=headers)
