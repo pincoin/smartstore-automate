@@ -118,8 +118,8 @@ if __name__ == '__main__':
 
             driver.switch_to.window(parent)
 
-            os.remove(os.path.join(download_path, batch_excel))
-            print('일괄발송 엑셀 로컬 삭제')
+        os.remove(os.path.join(download_path, batch_excel))
+        print('일괄발송 엑셀 로컬 삭제')
 
         wb_order.close()
         os.remove(files[0])
