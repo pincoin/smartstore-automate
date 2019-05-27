@@ -51,6 +51,7 @@ if __name__ == '__main__':
 
     driver.switch_to.frame(driver.find_element_by_id('__naverpay'))
     print('iframe 선택')
+    time.sleep(3)
 
     driver.find_element_by_xpath('//select[@name="orderStatus"]/option[text()="발송대기"]').click()
     print('발송대기 선택')
@@ -121,6 +122,7 @@ if __name__ == '__main__':
                     child = handle
 
             driver.switch_to.window(child)
+            time.sleep(3)
 
             driver.find_element_by_xpath('//input[@name="uploadedFile"]') \
                 .send_keys(os.path.join(download_path, batch_excel))
@@ -136,6 +138,7 @@ if __name__ == '__main__':
             time.sleep(2)
 
             driver.switch_to.window(parent)
+            time.sleep(3)
 
             os.remove(os.path.join(download_path, batch_excel))
             print('일괄발송 엑셀 로컬 삭제')
