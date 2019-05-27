@@ -67,4 +67,3 @@ python smartstore.py
 # TODO
 
 * send request (async)
-* crontab run script every 5 or 10 minutes
