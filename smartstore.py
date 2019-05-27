@@ -24,7 +24,11 @@ if __name__ == '__main__':
         options.add_argument('no-sandbox')
         options.add_argument('window-size=1920x1080')
 
-    options.add_experimental_option('prefs', {'download.default_directory': download_path})
+    options.add_experimental_option('prefs', {
+        'download.default_directory': download_path,
+        'download.prompt_for_download': False,
+        'download.directory_upgrade': True,
+    })
 
     driver = webdriver.Chrome(executable_path=executable_path, chrome_options=options)
 
