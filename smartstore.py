@@ -28,6 +28,7 @@ if __name__ == '__main__':
         'download.default_directory': download_path,
         'download.prompt_for_download': False,
         'download.directory_upgrade': True,
+        'Page.set_download_behavior': {'behavior': 'allow', 'downloadPath': download_path}
     })
 
     driver = webdriver.Chrome(executable_path=executable_path, chrome_options=options)
