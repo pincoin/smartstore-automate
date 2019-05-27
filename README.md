@@ -6,6 +6,8 @@ automation for naver smart store
 
 * selenium
 * openpyxl
+* xlwt
+* requests
 * beautifulsoup4
 
 # TODO
