@@ -18,6 +18,7 @@ if __name__ == '__main__':
 
     if chrome_headless:
         options.add_argument('disable-extensions')
+        options.add_argument('disable-popup-blocking')
         options.add_argument('headless')
         options.add_argument('disable-gpu')
         options.add_argument('no-sandbox')
