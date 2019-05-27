@@ -1,10 +1,10 @@
 import glob
+import json
 import os
 import time
 
 import openpyxl
 import requests
-import json
 import xlwt
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
@@ -15,6 +15,13 @@ if __name__ == '__main__':
     options = webdriver.ChromeOptions()
     options.add_argument('user-data-dir={}'.format(chrome_profile_path))
     options.add_argument('--profile-directory=Default')
+
+    if chrome_headless:
+        options.add_argument('--disable-extensions')
+        options.add_argument('--headless')
+        options.add_argument('--disable-gpu')
+        options.add_argument('--no-sandbox')
+
     options.add_experimental_option('prefs', {'download.default_directory': download_path})
 
     driver = webdriver.Chrome(executable_path=executable_path, chrome_options=options)
