@@ -65,6 +65,7 @@ if __name__ == '__main__':
 
     # 엑셀 열기
     files = [f for f in glob.glob(os.path.join('{}/*.xlsx'.format(download_path))) if os.path.isfile(f)]
+    print(files)
 
     if len(files) == 1 and files[0].endswith('.xlsx'):
         wb_order = openpyxl.load_workbook(files[0])
