@@ -24,7 +24,8 @@ pip install wheel
 pip install -r requirements.txt
 ```
 
-# secret.py
+# Files
+## secret.py
 
 ```
 executable_path = 'drivers/linux/chromedriver-74'
@@ -46,7 +47,22 @@ api_url = 'REST API URL'
 
 api_token = 'REST API TOKEN'
 ```
+## autosend.sh
 
+```
+#!/bin/bash
+
+cd /home/xxx
+source venv/bin/activate
+cd smartstore-automate
+python smartstore.py
+```
+
+## crontab run script every 5 minutes
+
+```
+*/5 * * * * /bin/bash /home/xxx/autosend.sh >/home/xxx/autosend.log 2>&1
+```
 
 # TODO
 
