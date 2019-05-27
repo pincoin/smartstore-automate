@@ -8,7 +8,6 @@ automation for naver smart store
 * openpyxl
 * xlwt
 * requests
-* beautifulsoup4
 
 # TODO
 
