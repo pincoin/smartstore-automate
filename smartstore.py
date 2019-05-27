@@ -28,10 +28,19 @@ if __name__ == '__main__':
         'download.default_directory': download_path,
         'download.prompt_for_download': False,
         'download.directory_upgrade': True,
-        'Page.setDownloadBehavior': {'behavior': 'allow', 'downloadPath': download_path}
+        # 'Page.setDownloadBehavior': {'behavior': 'allow', 'downloadPath': download_path}
     })
 
     driver = webdriver.Chrome(executable_path=executable_path, chrome_options=options)
+
+    driver.command_executor._commands['send_command'] = ("POST", '/session/$sessionId/chromium/send_command')
+    driver.execute('send_command', {
+        'cmd': 'Page.setDownloadBehavior',
+        'params': {
+            'behavior': 'allow',
+            'downloadPath': download_path
+        }
+    })
 
     driver.implicitly_wait(3)
 
