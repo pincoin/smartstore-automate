@@ -62,7 +62,6 @@ class SmartStore:
                 }
             })
 
-    def main(self):
         self.logger.info('Start crawling, PID {}'.format(os.getpid()))
 
         self.driver.implicitly_wait(5)
@@ -84,6 +83,7 @@ class SmartStore:
         except NoSuchElementException:
             pass
 
+    def main(self):
         while not self.__stop:
             self.driver.get('https://sell.smartstore.naver.com/#/naverpay/sale/delivery?summaryInfoType=DELIVERY_READY')
             self.logger.info('스마트스토어 이동')
