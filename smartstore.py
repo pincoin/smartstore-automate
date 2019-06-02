@@ -188,7 +188,7 @@ class SmartStore:
                 os.remove(files[0])
                 self.logger.info('엑셀 로컬 삭제')
 
-            time.sleep(60)
+            time.sleep(90)
         else:
             self.driver.quit()
 
