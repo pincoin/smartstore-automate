@@ -4,7 +4,7 @@ After=multi-user.target
 
 [Service]
 Type=forking
-ExecStart=/usr/bin/python /home/ubuntu/repo/1-daemon.py --pid /home/ubuntu/run/store.pid --log /home/ubuntu/log/store.log
+ExecStart=/home/ubuntu/venv/bin/python /home/ubuntu/repo/1-daemon.py --pid /home/ubuntu/run/store.pid --log /home/ubuntu/log/store.log
 Restart=always
 PIDFile=/home/ubuntu/run/d.pid
 WorkingDirectory=/home/ubuntu/
