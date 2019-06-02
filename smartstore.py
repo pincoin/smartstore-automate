@@ -63,7 +63,7 @@ class SmartStore:
             })
 
     def main(self):
-        self.logger.info('Start Singing, PID {}'.format(os.getpid()))
+        self.logger.info('Start crawling, PID {}'.format(os.getpid()))
 
         self.driver.implicitly_wait(5)
 
@@ -196,7 +196,7 @@ class SmartStore:
         # SIGINT, SIGTERM 시그널 수신 종료 핸들러
         self.__stop = True
         self.logger.info('Receive Signal {}'.format(signum))
-        self.logger.info('Stop Singing')
+        self.logger.info('Stop crawling')
 
 
 if __name__ == '__main__':
