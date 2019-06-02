@@ -65,7 +65,7 @@ class SmartStore:
     def main(self):
         self.logger.info('Start Singing, PID {}'.format(os.getpid()))
 
-        self.driver.implicitly_wait(3)
+        self.driver.implicitly_wait(5)
 
         self.driver.get('https://nid.naver.com/nidlogin.login')
 
@@ -84,117 +84,113 @@ class SmartStore:
         except NoSuchElementException:
             pass
 
-        self.driver.get('https://sell.smartstore.naver.com/#/naverpay/sale/delivery?summaryInfoType=DELIVERY_READY')
-        self.logger.info('스마트스토어 이동')
-        time.sleep(3)
-
-        self.driver.switch_to.frame(self.driver.find_element_by_id('__naverpay'))
-        self.logger.info('iframe 선택')
-        time.sleep(3)
-
-        self.driver.find_element_by_xpath('//select[@name="orderStatus"]/option[text()="발송대기"]').click()
-        self.logger.info('발송대기 선택')
-        time.sleep(3)
-
-        # 엑셀 다운로드
-        self.driver.find_element_by_class_name('_excelDownloadBtn').click()
-        self.logger.info('엑셀 다운로드')
-        time.sleep(5)
-
-        # 엑셀 열기
-        files = [f for f in glob.glob(os.path.join('{}/*.xlsx'.format(download_path))) if os.path.isfile(f)]
-        self.logger.info(files)
-
-        if len(files) == 1 and files[0].endswith('.xlsx'):
-            wb_order = openpyxl.load_workbook(files[0])
-            ws_order = wb_order.active
-
-            wb_batch = xlwt.Workbook()
-            ws_batch = wb_batch.add_sheet('발송처리')
-            ws_batch.write(0, 0, '상품주문번호')
-            ws_batch.write(0, 1, '배송방법')
-            ws_batch.write(0, 2, '택배사')
-            ws_batch.write(0, 3, '송장번호')
-
-            order_count = 0
-
-            for row in ws_order.rows:
-                if row[0].row > 2:
-                    order_count += 1
-
-                    # TODO: REST API 비동기 발송 처리
-
-                    # 구매자명, 판매자 상품코드, 수량, 수취인연락처1, 상품주문번호
-                    payload = {
-                        'customer': row[0].value,
-                        'product': int(row[2].value),
-                        'quantity': int(row[5].value),
-                        'phone': row[1].value,
-                        'order': row[17].value
-                    }
-                    headers = {
-                        'Content-Type': 'application/json',
-                        'Cache-Control': 'no-cache',
-                        'Authorization': 'Token {}'.format(api_token),
-                    }
-                    self.logger.info(payload)
-                    requests.post(api_url, data=json.dumps(payload), headers=headers)
-
-                    # 상품주문번호, 배송방법(배송없음), 택배사(공란), 송장번호(공란)
-                    ws_batch.write(order_count, 0, row[17].value)
-                    ws_batch.write(order_count, 1, '직접전달')
-                    ws_batch.write(order_count, 2, '')
-                    ws_batch.write(order_count, 3, '')
-
-            if order_count > 0:
-                wb_batch.save(os.path.join(download_path, batch_excel))
-                self.logger.info('일괄발송 엑셀 파일 저장')
-
-                parent = self.driver.current_window_handle
-                child = None
-
-                self.driver.find_element_by_xpath('//button[text()="엑셀 일괄발송"]').click()
-                self.logger.info('일괄발송 엑셀 팝업 띄우기')
-                time.sleep(3)
-
-                for handle in self.driver.window_handles:
-                    if handle != parent:
-                        child = handle
-
-                self.driver.switch_to.window(child)
-                time.sleep(3)
-
-                self.driver.find_element_by_xpath('//input[@name="uploadedFile"]') \
-                    .send_keys(os.path.join(download_path, batch_excel))
-                self.logger.info('일괄발송 엑셀 파일 선택')
-                time.sleep(5)
-
-                self.driver.find_element_by_xpath('//span[text()="일괄 발송처리"]').click()
-                self.logger.info('일괄발송 엑셀 파일 업로드')
-                time.sleep(3)
-
-                self.driver.find_element_by_xpath('//span[text()="닫기"]').click()
-                self.logger.info('일괄발송 엑셀 팝업 닫기')
-                time.sleep(2)
-
-                self.driver.switch_to.window(parent)
-                time.sleep(3)
-
-                os.remove(os.path.join(download_path, batch_excel))
-                self.logger.info('일괄발송 엑셀 로컬 삭제')
-
-            wb_order.close()
-            os.remove(files[0])
-            self.logger.info('엑셀 로컬 삭제')
-
-        self.driver.quit()
-
-        '''
         while not self.__stop:
-            self.logger.info(i)
-            i += 1
-            time.sleep(1)
-        '''
+            self.driver.get('https://sell.smartstore.naver.com/#/naverpay/sale/delivery?summaryInfoType=DELIVERY_READY')
+            self.logger.info('스마트스토어 이동')
+            time.sleep(3)
+
+            self.driver.switch_to.frame(self.driver.find_element_by_id('__naverpay'))
+            self.logger.info('iframe 선택')
+            time.sleep(3)
+
+            self.driver.find_element_by_xpath('//select[@name="orderStatus"]/option[text()="발송대기"]').click()
+            self.logger.info('발송대기 선택')
+            time.sleep(3)
+
+            # 엑셀 다운로드
+            self.driver.find_element_by_class_name('_excelDownloadBtn').click()
+            self.logger.info('엑셀 다운로드')
+            time.sleep(5)
+
+            # 엑셀 열기
+            files = [f for f in glob.glob(os.path.join('{}/*.xlsx'.format(download_path))) if os.path.isfile(f)]
+            self.logger.info(files)
+
+            if len(files) == 1 and files[0].endswith('.xlsx'):
+                wb_order = openpyxl.load_workbook(files[0])
+                ws_order = wb_order.active
+
+                wb_batch = xlwt.Workbook()
+                ws_batch = wb_batch.add_sheet('발송처리')
+                ws_batch.write(0, 0, '상품주문번호')
+                ws_batch.write(0, 1, '배송방법')
+                ws_batch.write(0, 2, '택배사')
+                ws_batch.write(0, 3, '송장번호')
+
+                order_count = 0
+
+                for row in ws_order.rows:
+                    if row[0].row > 2:
+                        order_count += 1
+
+                        # TODO: REST API 비동기 발송 처리
+
+                        # 구매자명, 판매자 상품코드, 수량, 수취인연락처1, 상품주문번호
+                        payload = {
+                            'customer': row[0].value,
+                            'product': int(row[2].value),
+                            'quantity': int(row[5].value),
+                            'phone': row[1].value,
+                            'order': row[17].value
+                        }
+                        headers = {
+                            'Content-Type': 'application/json',
+                            'Cache-Control': 'no-cache',
+                            'Authorization': 'Token {}'.format(api_token),
+                        }
+                        self.logger.info(payload)
+                        requests.post(api_url, data=json.dumps(payload), headers=headers)
+
+                        # 상품주문번호, 배송방법(배송없음), 택배사(공란), 송장번호(공란)
+                        ws_batch.write(order_count, 0, row[17].value)
+                        ws_batch.write(order_count, 1, '직접전달')
+                        ws_batch.write(order_count, 2, '')
+                        ws_batch.write(order_count, 3, '')
+
+                if order_count > 0:
+                    wb_batch.save(os.path.join(download_path, batch_excel))
+                    self.logger.info('일괄발송 엑셀 파일 저장')
+
+                    parent = self.driver.current_window_handle
+                    child = None
+
+                    self.driver.find_element_by_xpath('//button[text()="엑셀 일괄발송"]').click()
+                    self.logger.info('일괄발송 엑셀 팝업 띄우기')
+                    time.sleep(3)
+
+                    for handle in self.driver.window_handles:
+                        if handle != parent:
+                            child = handle
+
+                    self.driver.switch_to.window(child)
+                    time.sleep(3)
+
+                    self.driver.find_element_by_xpath('//input[@name="uploadedFile"]') \
+                        .send_keys(os.path.join(download_path, batch_excel))
+                    self.logger.info('일괄발송 엑셀 파일 선택')
+                    time.sleep(5)
+
+                    self.driver.find_element_by_xpath('//span[text()="일괄 발송처리"]').click()
+                    self.logger.info('일괄발송 엑셀 파일 업로드')
+                    time.sleep(3)
+
+                    self.driver.find_element_by_xpath('//span[text()="닫기"]').click()
+                    self.logger.info('일괄발송 엑셀 팝업 닫기')
+                    time.sleep(2)
+
+                    self.driver.switch_to.window(parent)
+                    time.sleep(3)
+
+                    os.remove(os.path.join(download_path, batch_excel))
+                    self.logger.info('일괄발송 엑셀 로컬 삭제')
+
+                wb_order.close()
+                os.remove(files[0])
+                self.logger.info('엑셀 로컬 삭제')
+
+            time.sleep(60)
+        else:
+            self.driver.quit()
 
     def stop(self, signum, frame):
         # SIGINT, SIGTERM 시그널 수신 종료 핸들러
