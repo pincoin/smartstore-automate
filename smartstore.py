@@ -172,11 +172,11 @@ class SmartStore:
 
                     self.driver.find_element_by_xpath('//span[text()="일괄 발송처리"]').click()
                     self.logger.info('일괄발송 엑셀 파일 업로드')
-                    time.sleep(3)
+                    time.sleep(5)
 
                     self.driver.find_element_by_xpath('//span[text()="닫기"]').click()
                     self.logger.info('일괄발송 엑셀 팝업 닫기')
-                    time.sleep(2)
+                    time.sleep(3)
 
                     self.driver.switch_to.window(parent)
                     time.sleep(3)
