@@ -205,9 +205,6 @@ if __name__ == '__main__':
     parser.add_argument('--log', help='log filename', default=None)
     args = parser.parse_args()
 
-    store = SmartStore(args.log)
-    store.main()
-
     # 첫 번째 fork
     pid = os.fork()
     if pid > 0:
