@@ -100,7 +100,7 @@ class SmartStore:
             # 엑셀 다운로드
             self.driver.find_element_by_class_name('_excelDownloadBtn').click()
             self.logger.info('엑셀 다운로드')
-            time.sleep(5)
+            time.sleep(10)
 
             # 엑셀 열기
             files = [f for f in glob.glob(os.path.join('{}/*.xlsx'.format(download_path))) if os.path.isfile(f)]
@@ -172,7 +172,7 @@ class SmartStore:
 
                     self.driver.find_element_by_xpath('//span[text()="일괄 발송처리"]').click()
                     self.logger.info('일괄발송 엑셀 파일 업로드')
-                    time.sleep(5)
+                    time.sleep(10)
 
                     self.driver.find_element_by_xpath('//span[text()="닫기"]').click()
                     self.logger.info('일괄발송 엑셀 팝업 닫기')
