@@ -3,6 +3,7 @@ import glob
 import json
 import logging
 import os
+import os.path
 import signal
 import sys
 import time
@@ -180,13 +181,18 @@ class SmartStore:
 
                     self.driver.switch_to.window(parent)
                     time.sleep(3)
-
-                    os.remove(os.path.join(download_path, batch_excel))
-                    self.logger.info('일괄발송 엑셀 로컬 삭제')
-
                 wb_order.close()
-                os.remove(files[0])
-                self.logger.info('엑셀 로컬 삭제')
+
+            # remove files
+            xls_files = glob.glob(os.path.join(download_path, '*.xls'))
+            for file in xls_files:
+                os.remove(file)
+            self.logger.info('일괄발송 엑셀 로컬 삭제')
+
+            xlsx_files = glob.glob(os.path.join(download_path, '*.xlsx'))
+            for file in xlsx_files:
+                os.remove(file)
+            self.logger.info('엑셀 로컬 삭제')
 
             time.sleep(90)
         else:
